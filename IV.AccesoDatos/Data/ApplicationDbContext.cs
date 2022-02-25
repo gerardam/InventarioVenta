@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using IV.Modelos;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,7 @@ namespace IV.AccesoDatos.Data
 			: base(options)
 		{
 		}
+
+		public DbSet<Bodega> Bodegas { get; set; }
 	}
 }
