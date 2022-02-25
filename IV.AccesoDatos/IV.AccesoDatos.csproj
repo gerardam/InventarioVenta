@@ -13,4 +13,9 @@
     <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IV.Modelos\IV.Modelos.csproj" />
+    <ProjectReference Include="..\IV.Utilidades\IV.Utilidades.csproj" />
+  </ItemGroup>
+
 </Project>
