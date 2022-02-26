@@ -1,4 +1,6 @@
 using IV.AccesoDatos.Data;
+using IV.AccesoDatos.Repositorio;
+using IV.AccesoDatos.Repositorio.IRepositorio;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,6 +34,7 @@ namespace InventarioVenta
 					Configuration.GetConnectionString("DefaultConnection")));
 			services.AddDefaultIdentity<IdentityUser>()
 				.AddEntityFrameworkStores<ApplicationDbContext>();
+			services.AddScoped<IUnidadTrabajo, UnidadTrabajo>();
 			services.AddControllersWithViews().AddRazorRuntimeCompilation();
 			services.AddRazorPages();
 		}
