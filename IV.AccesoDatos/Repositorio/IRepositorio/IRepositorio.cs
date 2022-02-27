@@ -28,5 +28,6 @@ namespace IV.AccesoDatos.Repositorio.IRepositorio
         void Remover(T entidad);
 
         void RemoverRango(IEnumerable<T> entidad);
+
     }
 }
