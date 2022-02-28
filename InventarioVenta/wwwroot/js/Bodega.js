@@ -28,7 +28,7 @@ function loadDataTable() {
                 "render": function (data) {
                     return `
                         <div class="text-center">
-                            <a href="Admin/Bodega/Upsert/${data}" class="btn btn-primary text-white" style="cursor:pointer">
+                            <a href="/Admin/Bodega/Upsert/${data}" class="btn btn-primary text-white" style="cursor:pointer">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a class="btn btn-danger text-white" style="cursor:pointer">

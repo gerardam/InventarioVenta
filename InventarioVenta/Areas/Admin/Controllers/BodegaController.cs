@@ -1,4 +1,5 @@
 ﻿using IV.AccesoDatos.Repositorio.IRepositorio;
+using IV.Modelos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioVenta.Areas.Admin.Controllers
@@ -16,6 +17,23 @@ namespace InventarioVenta.Areas.Admin.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Upsert(int? id)
+        {
+            Bodega bodega = new Bodega();
+            if (id == null)
+            {//Para crear nuevo registro
+                return View(bodega);
+            }
+            //para actualizar
+            bodega = _unidadTrabajo.Bodega.Obtener(id.GetValueOrDefault());
+            if (bodega == null)
+            {
+                return NotFound();
+            }
+
+            return View(bodega);
         }
 
         #region API
