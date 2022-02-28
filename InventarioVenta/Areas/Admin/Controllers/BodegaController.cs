@@ -36,6 +36,26 @@ namespace InventarioVenta.Areas.Admin.Controllers
             return View(bodega);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Upsert(Bodega bodega)
+        {
+            if (ModelState.IsValid)
+            {
+                if (bodega.Id == 0)
+                {
+                    _unidadTrabajo.Bodega.Agregar(bodega);
+                }
+                else
+                {
+                    _unidadTrabajo.Bodega.Actualizar(bodega);
+                }
+                _unidadTrabajo.Guardar();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(bodega);
+        }
+
         #region API
         [HttpGet]
         public IActionResult ObtenerTodos()

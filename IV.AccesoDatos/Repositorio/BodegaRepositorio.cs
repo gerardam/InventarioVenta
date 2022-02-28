@@ -26,8 +26,6 @@ namespace IV.AccesoDatos.Repositorio
                 bodegaDb.Nombre = bodega.Nombre;
                 bodegaDb.Descripcion = bodega.Descripcion;
                 bodegaDb.Estado = bodega.Estado;
-
-                _db.SaveChanges();
             }
         }
     }
