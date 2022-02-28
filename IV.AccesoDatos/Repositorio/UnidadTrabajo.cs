@@ -11,11 +11,13 @@ namespace IV.AccesoDatos.Repositorio
     {
         private readonly ApplicationDbContext _db;
         public IBodegaRepositorio Bodega { get; private set; }
+        public ICategoriaRepositorio Categoria { get; private set; }
 
         public UnidadTrabajo(ApplicationDbContext db)
         {
             _db = db;
             Bodega = new BodegaRepositorio(_db);//Inicializamos
+            Categoria = new CategoriaRepositorio(_db);//Inicializamos
         }
 
         public void Guardar()
