@@ -145,6 +145,15 @@ namespace InventarioVenta.Areas.Admin.Controllers
             {
                 return Json(new { success = false, message = "Error al borrar" });
             }
+            //Eliminar imagen relacionada con el producto
+            string webRootPath = _hostEnvironment.WebRootPath;
+
+            var imagenPath = Path.Combine(webRootPath, marcaDb.ImagenUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(imagenPath))
+            {
+                System.IO.File.Delete(imagenPath);
+            }
+
             _unidadTrabajo.Producto.Remover(marcaDb);
             _unidadTrabajo.Guardar();
             return Json(new { success = true, message = "Producto borrada exitosamente" });
