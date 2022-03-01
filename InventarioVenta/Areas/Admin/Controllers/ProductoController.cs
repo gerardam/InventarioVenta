@@ -1,7 +1,10 @@
 ﻿using IV.AccesoDatos.Repositorio.IRepositorio;
 using IV.Modelos;
+using IV.Modelos.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace InventarioVenta.Areas.Admin.Controllers
 {
@@ -24,19 +27,33 @@ namespace InventarioVenta.Areas.Admin.Controllers
 
         public IActionResult Upsert(int? id)
         {
-            Producto producto = new Producto();
+            ProductoVM productoVM = new ProductoVM()
+            {
+                Producto = new Producto(),
+                CategoriaLista = _unidadTrabajo.Categoria.ObtenerTodos().Select(m => new SelectListItem
+                {
+                    Text = m.Nombre,
+                    Value = m.Id.ToString()
+                }),
+                MarcaLista = _unidadTrabajo.Marca.ObtenerTodos().Select(m => new SelectListItem
+                {
+                    Text = m.Nombre,
+                    Value = m.Id.ToString()
+                })
+            };
+
             if (id == null)
             {//Para crear nuevo registro
-                return View(producto);
+                return View(productoVM);
             }
             //para actualizar
-            producto = _unidadTrabajo.Producto.Obtener(id.GetValueOrDefault());
-            if (producto == null)
+            productoVM.Producto = _unidadTrabajo.Producto.Obtener(id.GetValueOrDefault());
+            if (productoVM.Producto == null)
             {
                 return NotFound();
             }
 
-            return View(producto);
+            return View(productoVM);
         }
 
         [HttpPost]
@@ -63,7 +80,7 @@ namespace InventarioVenta.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult ObtenerTodos()
         {
-            var todos = _unidadTrabajo.Producto.ObtenerTodos();
+            var todos = _unidadTrabajo.Producto.ObtenerTodos(incluirPropiedades: "Categoria,Marca");
             return Json(new { data = todos });
         }
 
