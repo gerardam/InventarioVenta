@@ -41,6 +41,11 @@ namespace InventarioVenta.Areas.Admin.Controllers
                 {
                     Text = m.Nombre,
                     Value = m.Id.ToString()
+                }),
+                PadreLista = _unidadTrabajo.Producto.ObtenerTodos().Select(p => new SelectListItem
+                {
+                    Text = p.Descripcion,
+                    Value = p.Id.ToString()
                 })
             };
 
@@ -119,6 +124,11 @@ namespace InventarioVenta.Areas.Admin.Controllers
                 {
                     Text = c.Nombre,
                     Value = c.Id.ToString()
+                });
+                productoVM.PadreLista = _unidadTrabajo.Producto.ObtenerTodos().Select(p => new SelectListItem
+                {
+                    Text = p.Descripcion,
+                    Value = p.Id.ToString()
                 });
 
                 if (productoVM.Producto.Id != 0)
