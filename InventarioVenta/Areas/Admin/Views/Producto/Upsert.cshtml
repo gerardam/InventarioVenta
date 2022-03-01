@@ -17,7 +17,7 @@
 	<div class="col-md-12 border-bottom">
 		<h2 class="text-primary">@titulo</h2>
 	</div>
-	<div class="col-md-5">
+	<div class="col-md-6">
 		<div class="form-group">
 			<label asp-for="Producto.NumeroSerie" class="form-label mt-4"></label>
 			<input asp-for="Producto.NumeroSerie" class="form-control" />
@@ -39,7 +39,7 @@
 			<span asp-validation-for="Producto.Precio" class="text-danger"></span>
 		</div>
 	</div>
-	<div class="col-md-5">
+	<div class="col-md-6">
 		<div class="form-group">
 			<label class="form-label mt-4">Categoria</label>
 			@Html.DropDownListFor(c => c.Producto.CategoriaId, Model.CategoriaLista, "Seleccione",
@@ -48,7 +48,7 @@
 		</div>
 		<div class="form-group">
 			<label class="form-label mt-4">Marca</label>
-			@Html.DropDownListFor(c => c.Producto.MarcaId, Model.CategoriaLista, "Seleccione",
+			@Html.DropDownListFor(c => c.Producto.MarcaId, Model.MarcaLista, "Seleccione",
 			new {@class="form-select"})
 			<span asp-validation-for="Producto.MarcaId" class="text-danger"></span>
 		</div>

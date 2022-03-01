@@ -26,4 +26,8 @@
     <ProjectReference Include="..\IV.Utilidades\IV.Utilidades.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\img\productos\" />
+  </ItemGroup>
+
 </Project>

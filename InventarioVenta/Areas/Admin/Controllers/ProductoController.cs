@@ -4,6 +4,8 @@ using IV.Modelos.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.IO;
 using System.Linq;
 
 namespace InventarioVenta.Areas.Admin.Controllers
@@ -58,22 +60,73 @@ namespace InventarioVenta.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Producto producto)
+        public IActionResult Upsert(ProductoVM productoVM)
         {
             if (ModelState.IsValid)
             {
-                if (producto.Id == 0)
+                //Cargar imagenes
+                string webRootPath = _hostEnvironment.WebRootPath;
+                var files = HttpContext.Request.Form.Files;
+                if (files.Count > 0)
                 {
-                    _unidadTrabajo.Producto.Agregar(producto);
+                    string fileName = Guid.NewGuid().ToString();
+                    var uploads = Path.Combine(webRootPath, @"img\productos");
+                    var extension = Path.GetExtension(files[0].FileName);
+                    if (productoVM.Producto.ImagenUrl != null)
+                    {
+                        //Esto es para editar, necesitamos borrar la imagen anterior
+                        var imagenPath = Path.Combine(webRootPath, productoVM.Producto.ImagenUrl.TrimStart('\\'));
+                        if (System.IO.File.Exists(imagenPath))
+                        {
+                            System.IO.File.Delete(imagenPath);
+                        }
+                    }
+                    using (var filesStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                    {
+                        files[0].CopyTo(filesStreams);
+                    }
+                    productoVM.Producto.ImagenUrl = @"\img\productos\" + fileName + extension;
                 }
                 else
                 {
-                    _unidadTrabajo.Producto.Actualizar(producto);
+                    //Si en el update el usuario no cambia la imagen
+                    if (productoVM.Producto.Id != 0)
+                    {
+                        Producto productoDB = _unidadTrabajo.Producto.Obtener(productoVM.Producto.Id);
+                        productoVM.Producto.ImagenUrl = productoDB.ImagenUrl;
+                    }
+                }
+
+                if (productoVM.Producto.Id == 0)
+                {
+                    _unidadTrabajo.Producto.Agregar(productoVM.Producto);
+                }
+                else
+                {
+                    _unidadTrabajo.Producto.Actualizar(productoVM.Producto);
                 }
                 _unidadTrabajo.Guardar();
                 return RedirectToAction(nameof(Index));
             }
-            return View(producto);
+            else
+            {
+                productoVM.CategoriaLista = _unidadTrabajo.Categoria.ObtenerTodos().Select(c => new SelectListItem
+                {
+                    Text = c.Nombre,
+                    Value = c.Id.ToString()
+                });
+                productoVM.MarcaLista = _unidadTrabajo.Marca.ObtenerTodos().Select(c => new SelectListItem
+                {
+                    Text = c.Nombre,
+                    Value = c.Id.ToString()
+                });
+
+                if (productoVM.Producto.Id != 0)
+                {
+                    productoVM.Producto = _unidadTrabajo.Producto.Obtener(productoVM.Producto.Id);
+                }
+            }
+            return View(productoVM.Producto);
         }
 
         #region API
