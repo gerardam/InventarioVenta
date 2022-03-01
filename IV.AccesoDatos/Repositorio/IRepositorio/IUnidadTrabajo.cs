@@ -9,6 +9,7 @@ namespace IV.AccesoDatos.Repositorio.IRepositorio
         IBodegaRepositorio Bodega { get; }
         ICategoriaRepositorio Categoria { get; }
         IMarcaRepositorio Marca { get; }
+        IProductoRepositorio Producto { get; }
 
         void Guardar();
     }
