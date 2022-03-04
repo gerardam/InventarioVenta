@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -84,11 +85,23 @@ namespace InventarioVenta.Areas.Identity.Pages.Account
             public string Ciudad { get; set; }
             public string Pais { get; set; }
             public string Role { get; set; }
+
+            public IEnumerable<SelectListItem> ListaRol { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+
+            Input = new InputModel()
+            {
+                ListaRol = _roleManager.Roles.Where(r => r.Name != DS.Role_Cliente).Select(n => n.Name).Select(l => new SelectListItem
+                {
+                    Text = l,
+                    Value = l
+                })
+            };
+
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
@@ -134,7 +147,15 @@ namespace InventarioVenta.Areas.Identity.Pages.Account
                         await _roleManager.CreateAsync(new IdentityRole(DS.Role_Ventas));
                     }
 
-                    await _userManager.AddToRoleAsync(user, DS.Role_Admin);
+                    //await _userManager.AddToRoleAsync(user, DS.Role_Admin);
+                    if (user.Role == null)
+                    {
+                        await _userManager.AddToRoleAsync(user, DS.Role_Cliente);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, user.Role);
+                    }
 
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -153,8 +174,16 @@ namespace InventarioVenta.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        if (user.Role == null)
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
+                        else
+                        {
+                            //El administradorb esta registrando un nuevo usuario
+                            return RedirectToAction("Index", "User", new { Area = "Admin"});
+                        }
                     }
                 }
                 foreach (var error in result.Errors)
