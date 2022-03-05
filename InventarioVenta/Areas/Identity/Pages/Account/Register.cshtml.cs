@@ -119,6 +119,7 @@ namespace InventarioVenta.Areas.Identity.Pages.Account
                     Apellidos = Input.Apellidos,
                     Direccion = Input.Direccion,
                     Ciudad = Input.Ciudad,
+                    PhoneNumber = Input.PhoneNumber,
                     Pais = Input.Pais,
                     Role = Input.Role
                 };
@@ -182,7 +183,7 @@ namespace InventarioVenta.Areas.Identity.Pages.Account
                         else
                         {
                             //El administradorb esta registrando un nuevo usuario
-                            return RedirectToAction("Index", "User", new { Area = "Admin"});
+                            return RedirectToAction("Index", "Usuario", new { Area = "Admin"});
                         }
                     }
                 }
