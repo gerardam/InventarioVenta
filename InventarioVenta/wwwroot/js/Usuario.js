@@ -27,7 +27,7 @@ function loadDataTable() {
                         //El usuario esta bloquedo
                         return `
                         <div class="text-center">
-                            <a onclick=BloquearDesbloquear('${data.id}') class="btn btn-success text-white" style="cursor:pointer">
+                            <a onclick=BloquearDesbloquear('${data.id}') class="btn btn-danger text-white" style="cursor:pointer;width:170px;">
                                 <i class="fas fa-lock-open"></i> Desbloquear
                             </a>
                         </div>
@@ -37,41 +37,33 @@ function loadDataTable() {
                         //El usuario esta desbloquedo
                         return `
                         <div class="text-center">
-                            <a onclick=BloquearDesbloquear('${data.id}') class="btn btn-danger text-white" style="cursor:pointer">
+                            <a onclick=BloquearDesbloquear('${data.id}') class="btn btn-success text-white" style="cursor:pointer;width:170px;">
                                 <i class="fas fa-lock"></i> Bloquear
                             </a>
                         </div>
                         `;
                     }
-                    
+
                 }, "width": "30%"
             }
         ]
     });
 }
 
-function Delete(url) {
-    swal({
-        title: "Seguro de eliminar la Categoria?",
-        text: "Este  registro no se podra recuperar.",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true
-    }).then((borrar) => {
-        if (borrar) {
-            $.ajax({
-                type: "DELETE",
-                url: url,
-                success: function (data) {
-                    if (data.success) {
-                        toastr.success(data.message);
-                        datatable.ajax.reload();
-                    }
-                    else {
-                        toastr.error(data.message);
-                    }
-                }
-            });
+function BloquearDesbloquear(id) {
+    $.ajax({
+        type: "POST",
+        url: '/Admin/Usuario/BloquearDesbloquear',
+        data: JSON.stringify(id),
+        contentType: "application/json",
+        success: function (data) {
+            if (data.success) {
+                toastr.success(data.message);
+                datatable.ajax.reload();
+            }
+            else {
+                toastr.error(data.message);
+            }
         }
     });
 }

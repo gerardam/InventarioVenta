@@ -1,5 +1,6 @@
 ﻿using IV.AccesoDatos.Data;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 
 namespace InventarioVenta.Areas.Admin.Controllers
@@ -34,6 +35,27 @@ namespace InventarioVenta.Areas.Admin.Controllers
             }
 
             return Json(new { data = usuarioLista });
+        }
+
+        [HttpPost]
+        public IActionResult BloquearDesbloquear([FromBody] string id)
+        {
+            var usuario = _db.UsuarioAplicaciones.FirstOrDefault(u => u.Id == id);
+            if (usuario == null)
+            {
+                return Json(new { success = false, message = "Error de usuario" });
+            }
+            if (usuario.LockoutEnd != null && usuario.LockoutEnd > DateTime.Now)
+            {
+                //Usuario bloqueado
+                usuario.LockoutEnd = DateTime.Now;
+            }
+            else
+            {
+                usuario.LockoutEnd = DateTime.Now.AddYears(100);
+            }
+            _db.SaveChanges();
+            return Json(new { success = true, message = "Operacion exitosa" });
         }
         #endregion
     }
