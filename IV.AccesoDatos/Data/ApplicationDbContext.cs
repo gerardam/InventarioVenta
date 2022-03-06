@@ -16,5 +16,8 @@ namespace IV.AccesoDatos.Data
         public DbSet<Marca> Marcas { get; set; }
         public DbSet<Producto> Productos { get; set; }
         public DbSet<UsuarioAplicacion> UsuarioAplicaciones { get; set; }
+        public DbSet<BodegaProducto> BodegaProducto { get; set; }
+        public DbSet<Inventario> Inventario { get; set; }
+        public DbSet<InventarioDetalle> InventarioDetalle { get; set; }
     }
 }
