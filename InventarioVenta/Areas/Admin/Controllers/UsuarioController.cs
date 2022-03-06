@@ -1,4 +1,6 @@
 ﻿using IV.AccesoDatos.Data;
+using IV.Utilidades;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -6,6 +8,7 @@ using System.Linq;
 namespace InventarioVenta.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = DS.Role_Admin)]
     public class UsuarioController : Controller
     {
         private readonly ApplicationDbContext _db;

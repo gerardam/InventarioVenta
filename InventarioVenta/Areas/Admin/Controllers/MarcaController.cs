@@ -1,10 +1,13 @@
 ﻿using IV.AccesoDatos.Repositorio.IRepositorio;
 using IV.Modelos;
+using IV.Utilidades;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioVenta.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = DS.Role_Admin)]
     public class MarcaController : Controller
     {
         private readonly IUnidadTrabajo _unidadTrabajo;
