@@ -51,7 +51,8 @@ namespace InventarioVenta.Areas.Inventario.Controllers
             if (inventarioId != null)
             {
                 inventarioVM.Inventario = _db.Inventario.SingleOrDefault(i => i.Id == inventarioId);
-                inventarioVM.InventarioDetalles = _db.InventarioDetalle.Include(p => p.Producto).Include(m => m.Producto.Marca).Where(d => d.InventarioId == inventarioId).ToList();
+                inventarioVM.InventarioDetalles = _db.InventarioDetalle.Include(p => p.Producto).Include(m => m.Producto.Marca).
+                    Where(d => d.InventarioId == inventarioId).ToList();
             }
 
             return View(inventarioVM);
@@ -61,14 +62,13 @@ namespace InventarioVenta.Areas.Inventario.Controllers
         public IActionResult AgregarProductoPost(int producto, int cantidad, int inventarioId)
         {
             inventarioVM.Inventario.Id = inventarioId;
-            if (inventarioVM.Inventario.Id == 0)//Graba el registro en el inventario
+            if (inventarioVM.Inventario.Id == 0) // Graba el Registro en inventario
             {
                 inventarioVM.Inventario.Estado = false;
                 inventarioVM.Inventario.FechaInicial = DateTime.Now;
-                //Capturar el ID del usuario conectado
+                // Capturar el Id del usuario conectado
                 var claimIdentidad = (ClaimsIdentity)User.Identity;
                 var claim = claimIdentidad.FindFirst(ClaimTypes.NameIdentifier);
-
                 inventarioVM.Inventario.UsuarioAplicacionId = claim.Value;
 
                 _db.Inventario.Add(inventarioVM.Inventario);
@@ -136,6 +136,34 @@ namespace InventarioVenta.Areas.Inventario.Controllers
             }
 
             return RedirectToAction("NuevoInventario", new { inventarioId = inventarioVM.Inventario.Id });
+        }
+
+        public IActionResult GenerarStock(int Id)
+        {
+            var inventario = _db.Inventario.FirstOrDefault(i => i.Id == Id);
+            var detalleLista = _db.InventarioDetalle.Where(d => d.InventarioId == Id);
+
+            foreach (var item in detalleLista)
+            {
+                var bodegaProducto = _db.BodegaProducto.Include(p => p.Producto).FirstOrDefault(b => b.ProductoId == item.ProductoId && b.BodegaId == inventario.BodegaId);
+                if (bodegaProducto != null)
+                {
+                    bodegaProducto.Cantidad += item.Cantidad;
+                }
+                else
+                {
+                    bodegaProducto = new BodegaProducto();
+                    bodegaProducto.BodegaId = inventario.BodegaId;
+                    bodegaProducto.ProductoId = item.ProductoId;
+                    bodegaProducto.Cantidad = item.Cantidad;
+                    _db.BodegaProducto.Add(bodegaProducto);
+                }
+            }
+            // Actualizar la Cabecera de Inventario
+            inventario.Estado = true;
+            inventario.FechaFinal = DateTime.Now;
+            _db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
 
         #region API

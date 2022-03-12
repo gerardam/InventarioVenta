@@ -7,7 +7,7 @@ $(document).ready(function () {
 function loadDataTable() {
     datatable = $('#tblDatos').DataTable({
         "ajax": {
-            "url": "/Admin/Inventario/ObtenerTodos"
+            "url": "/Inventario/Inventario/ObtenerTodos"
         },
         "columns": [
             { "data": "bodega.nombre", "width": "20%" },
