@@ -1,11 +1,15 @@
 ﻿using IV.AccesoDatos.Data;
+using IV.Modelos;
 using IV.Modelos.ViewModels;
 using IV.Utilidades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace InventarioVenta.Areas.Inventario.Controllers
 {
@@ -42,13 +46,96 @@ namespace InventarioVenta.Areas.Inventario.Controllers
                 Value = p.Id.ToString()
             });
 
+            inventarioVM.InventarioDetalles = new List<InventarioDetalle>();
+
             if (inventarioId != null)
             {
                 inventarioVM.Inventario = _db.Inventario.SingleOrDefault(i => i.Id == inventarioId);
-                inventarioVM.InventarioDetalles = _db.InventarioDetalle.Include(p => p.Producto).ToList();
+                inventarioVM.InventarioDetalles = _db.InventarioDetalle.Include(p => p.Producto).Include(m => m.Producto.Marca).Where(d => d.InventarioId == inventarioId).ToList();
             }
 
             return View(inventarioVM);
+        }
+
+        [HttpPost]
+        public IActionResult AgregarProductoPost(int producto, int cantidad, int inventarioId)
+        {
+            inventarioVM.Inventario.Id = inventarioId;
+            if (inventarioVM.Inventario.Id == 0)//Graba el registro en el inventario
+            {
+                inventarioVM.Inventario.Estado = false;
+                inventarioVM.Inventario.FechaInicial = DateTime.Now;
+                //Capturar el ID del usuario conectado
+                var claimIdentidad = (ClaimsIdentity)User.Identity;
+                var claim = claimIdentidad.FindFirst(ClaimTypes.NameIdentifier);
+
+                inventarioVM.Inventario.UsuarioAplicacionId = claim.Value;
+
+                _db.Inventario.Add(inventarioVM.Inventario);
+                _db.SaveChanges();
+            }
+            else
+            {
+                inventarioVM.Inventario = _db.Inventario.SingleOrDefault(i => i.Id == inventarioId);
+            }
+            var bodegaProducto = _db.BodegaProducto.Include(b => b.Producto).FirstOrDefault(b => b.ProductoId == producto && b.BodegaId == inventarioVM.Inventario.BodegaId);
+            var detalle = _db.InventarioDetalle.Include(p => p.Producto).FirstOrDefault(d => d.ProductoId == producto && d.InventarioId == inventarioVM.Inventario.Id);
+
+            if (detalle == null)
+            {
+                inventarioVM.InventarioDetalle = new InventarioDetalle();
+                inventarioVM.InventarioDetalle.ProductoId = producto;
+                inventarioVM.InventarioDetalle.InventarioId = inventarioVM.Inventario.Id;
+                if (bodegaProducto != null)
+                {
+                    inventarioVM.InventarioDetalle.StockAnterior = bodegaProducto.Cantidad;
+                }
+                else
+                {
+                    inventarioVM.InventarioDetalle.StockAnterior = 0;
+                }
+                inventarioVM.InventarioDetalle.Cantidad = cantidad;
+                _db.InventarioDetalle.Add(inventarioVM.InventarioDetalle);
+                _db.SaveChanges();
+            }
+            else
+            {
+                detalle.Cantidad += cantidad;
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("NuevoInventario", new { inventarioId = inventarioVM.Inventario.Id });
+        }
+
+        public IActionResult Mas(int Id)
+        {
+            inventarioVM = new InventarioViewModel();
+            var detalle = _db.InventarioDetalle.FirstOrDefault(d => d.Id == Id);
+            inventarioVM.Inventario = _db.Inventario.FirstOrDefault(i => i.Id == detalle.InventarioId);
+
+            detalle.Cantidad += 1;
+            _db.SaveChanges();
+            return RedirectToAction("NuevoInventario", new { inventarioId = inventarioVM.Inventario.Id });
+        }
+
+        public IActionResult Menos(int Id)
+        {
+            inventarioVM = new InventarioViewModel();
+            var detalle = _db.InventarioDetalle.FirstOrDefault(d => d.Id == Id);
+            inventarioVM.Inventario = _db.Inventario.FirstOrDefault(i => i.Id == detalle.InventarioId);
+
+            if (detalle.Cantidad == 1)
+            {
+                _db.InventarioDetalle.Remove(detalle);
+                _db.SaveChanges();
+            }
+            else
+            {
+                detalle.Cantidad -= 1;
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("NuevoInventario", new { inventarioId = inventarioVM.Inventario.Id });
         }
 
         #region API

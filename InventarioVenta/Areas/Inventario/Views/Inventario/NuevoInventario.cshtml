@@ -39,6 +39,63 @@
 	</div>
 </form>
 
+<div>
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr class="table-dark">
+                <th>
+                    Producto
+                </th>
+                <th>
+                    Marca
+                </th>
+                <th style="text-align:right;">
+                    Costo
+                </th>
+                <th style="text-align:right;">
+                    Stock
+                </th>
+                <th style="text-align:right;">
+                    Cantidad
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.InventarioDetalles)
+            {
+            <tr>
+                <td style="font-size:14px;">
+                    @Html.DisplayFor(m => item.Producto.Descripcion)
+                </td>
+                <td style="font-size:14px;">
+                    @Html.DisplayFor(m => item.Producto.Marca.Nombre)
+                </td>
+                <td style="font-size:14px;text-align:right;">
+                    @Html.DisplayFor(m => item.Producto.Costo)
+                </td>
+                <td style="font-size:14px;text-align:right;">
+                    @Html.DisplayFor(m => item.StockAnterior)
+                </td>
+                <td style="font-size:14px;text-align:right;color:blue;font-weight:bold;">
+                    @Html.DisplayFor(m => item.Cantidad)
+                </td>
+                <td>
+                    <a class="btn btn-primary text-white" asp-action="Mas" asp-route-Id="@item.Id">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                    <a class="btn btn-dark text-white" asp-action="Menos" asp-route-Id="@item.Id">
+                        <i class="fas fa-minus"></i>
+                    </a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 @section Scripts{
     @{
     await Html.RenderPartialAsync("_ValidationScriptsPartial");
