@@ -166,6 +166,11 @@ namespace InventarioVenta.Areas.Inventario.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public IActionResult Historial()
+        {
+            return View();
+        }
+
         #region API
         [HttpGet]
         public IActionResult ObtenerTodos()
@@ -173,6 +178,14 @@ namespace InventarioVenta.Areas.Inventario.Controllers
             var todos = _db.BodegaProducto.Include(b => b.Bodega).Include(p => p.Producto).ToList();
             return Json(new { data = todos });
         }
+
+        [HttpGet]
+        public IActionResult ObtenerHistorial()
+        {
+            var todos = _db.Inventario.Include(b => b.Bodega).Include(u => u.UsuarioAplicacion).Where(i => i.Estado == true).ToList();
+            return Json(new { data = todos });
+        }
+
         #endregion
     }
 }
