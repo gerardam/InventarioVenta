@@ -171,6 +171,12 @@ namespace InventarioVenta.Areas.Inventario.Controllers
             return View();
         }
 
+        public IActionResult DetalleHistorial(int id)
+        {
+            var detalleHistorial = _db.InventarioDetalle.Include(p => p.Producto).Include(m => m.Producto.Marca).Where(d => d.InventarioId == id);
+            return View(detalleHistorial);
+        }
+
         #region API
         [HttpGet]
         public IActionResult ObtenerTodos()
