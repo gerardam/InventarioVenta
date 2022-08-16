@@ -16,6 +16,9 @@ namespace IV.AccesoDatos.Repositorio
         public IProductoRepositorio Producto { get; private set; }
         public IUsuarioAplicacionRepositorio UsuarioAplicacion { get; private set; }
         public ICompaniaRepositorio Compania { get; private set; }
+        public ICarroComprasRepositorio CarroCompras { get; private set; }
+        public IOrdenRepositorio Orden { get; private set; }
+        public IOrdenDetalleRepositorio OrdenDetalle { get; private set; }
 
         public UnidadTrabajo(ApplicationDbContext db)
         {
@@ -26,6 +29,9 @@ namespace IV.AccesoDatos.Repositorio
             Producto = new ProductoRepositorio(_db);//Inicializamos
             UsuarioAplicacion = new UsuarioAplicacionRepositorio(_db);//Inicializamos
             Compania = new CompaniaRepositorio(_db);//Inicializamos
+            CarroCompras = new CarroComprasRepositorio(_db);//Inicializamos
+            Orden = new OrdenRepositorio(_db);//Inicializamos
+            OrdenDetalle = new OrdenDetalleRepositorio(_db);//Inicializamos
         }
 
         public void Guardar()
