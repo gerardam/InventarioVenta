@@ -1,4 +1,6 @@
 ﻿@using IV.Utilidades
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 <!DOCTYPE html>
 <html lang="en">
@@ -76,6 +78,27 @@
 								</div>
 							</li>
 						}
+
+						@if (HttpContextAccessor.HttpContext.Session.GetInt32(DS.ssCarroCompras) != null)
+						{
+							<li style="color:white;">
+								<a asp-area="Inventario" asp-controller="Carro" asp-action="Index" class="nav-link">
+									@{
+										var cantidadProducto = HttpContextAccessor.HttpContext.Session.GetInt32(DS.ssCarroCompras);
+									}
+									<i class="fas fa-shopping-cart"></i> &nbsp; (@cantidadProducto)
+								</a>
+							</li>
+						}
+						else
+						{
+							<li>
+								<a href="#" class="nav-link">
+									<i class="fas fa-shopping-cart"></i> &nbsp; (0)
+								</a>
+							</li>
+						}
+
 					</ul>
 				</div>
 			</div>

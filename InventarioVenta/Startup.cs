@@ -31,22 +31,29 @@ namespace InventarioVenta
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+			services.AddDbContext<ApplicationDbContext>(options =>
+				options.UseSqlServer(
+					Configuration.GetConnectionString("DefaultConnection")));
+			services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
+				.AddEntityFrameworkStores<ApplicationDbContext>();
 			services.AddSingleton<IEmailSender, EmailSender>();
-            services.AddScoped<IUnidadTrabajo, UnidadTrabajo>();
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddRazorPages();
+			services.AddScoped<IUnidadTrabajo, UnidadTrabajo>();
+			services.AddControllersWithViews().AddRazorRuntimeCompilation();
+			services.AddRazorPages();
 			services.ConfigureApplicationCookie(options =>
 			{
 				options.LoginPath = $"/Identity/Account/Login";
 				options.LogoutPath = $"/Identity/Account/Logout";
 				options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 			});
-        }
+
+			services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(30);
+				options.Cookie.HttpOnly = true;
+				options.Cookie.IsEssential = true;
+			});
+		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -66,6 +73,7 @@ namespace InventarioVenta
 			app.UseStaticFiles();
 
 			app.UseRouting();
+			app.UseSession();
 
 			app.UseAuthentication();
 			app.UseAuthorization();

@@ -23,7 +23,7 @@ namespace IV.Utilidades
             smtp.Port = 587;
             smtp.UseDefaultCredentials = true;
             smtp.EnableSsl = true;
-            smtp.Credentials = new System.Net.NetworkCredential("apikey", "");
+            smtp.Credentials = new System.Net.NetworkCredential("apikey", "************************");
 
             return smtp.SendMailAsync(mm);
         }

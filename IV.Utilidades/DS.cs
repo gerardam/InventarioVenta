@@ -10,5 +10,6 @@ namespace IV.Utilidades
 		public const string Role_Admin = "Admin";
 		public const string Role_Inventario = "Inventario";
 		public const string Role_Ventas = "Ventas";
+		public const string ssCarroCompras = "Sesion Carro Compras";
 	}
 }
